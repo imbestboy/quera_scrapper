@@ -19,13 +19,51 @@ if you run this application you will see :
 3. install requirements
 
 ```bash
-pip install -r path/to/requirments.txt
+pip3 install -r path/to/requirments.txt
 ```
 
 or
 
 ```bash
-pip3 install -r path/to/requirments.txt
+python -m pip install -r path/to/requirments.txt
 ```
 
-4. run code and wait
+3.1.1 To install the Tkinter on popular Linux distros:
+
+Debian/Ubuntu:
+
+```bash
+sudo apt install python3-tk -y
+```
+
+Fedora:
+
+```bash
+sudo dnf install -y python3-tkinter
+```
+
+Arch:
+
+```bash
+sudo pacman -Syu tk --noconfirm
+```
+
+REHL/CentOS6/CentOS7:
+
+```bash
+sudo yum install -y python3-tkinter
+```
+
+OpenSUSE:
+
+```bash
+sudo zypper in -y python-tk
+```
+
+3.1.2 To install the Tkinter on Mac:
+
+```bash
+brew install python-tk
+```
+
+4. run code
