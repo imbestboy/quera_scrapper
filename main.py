@@ -11,7 +11,8 @@ def counter(dictionary: dict, key: str, how_many: int = 1):
         dictionary {dict} -- dict you counting something on it
     """
     key = key.lower().strip()
-    dictionary[key] = dictionary.get(key, 0) + how_many
+    if key.replace("_", "").replace("-", "").replace(" ", "").isalnum():
+        dictionary[key] = dictionary.get(key, 0) + how_many
 
 
 def show_detail(step: str):
@@ -19,7 +20,7 @@ def show_detail(step: str):
         print(step)
 
 
-detail_showing = input("do you want see detail of scrap ? (y/n) ")
+detail_showing = input("do you want see detail of scrap ? (y/n) : ")
 print("\nthis application may takes some minute ...")
 can_show_detail = True if detail_showing.startswith("y") else False
 
@@ -40,6 +41,8 @@ while True:
     show_detail(f"getting and parsing page {page} ...")
     try:
         response = requests.get(f"https://quera.ir/magnet/jobs?page={page}").content
+    except KeyboardInterrupt:
+        exit()
     except:
         re = "re"
         if page == 1:
@@ -61,34 +64,39 @@ while True:
     show_detail(f"getting jobs in page {page} ...")
     jobs = parsed_response.find(class_="chakra-stack css-1536cui")
     for job in jobs:
+        if job_count % 16 == 0:
+            job_count += 1
+            continue
         job_count += 1
-        job_technologies = job.find(class_="css-q64f56 e1pk5grm2")
-        for tech in job_technologies:
-            try:
-                if tech["title"] == "تکنولوژی اصلی":
-                    counter(main_technologies, tech.text)
-            except KeyError:
-                counter(normal_technologies, tech.text)
-        information = job.find(class_="chakra-stack css-4xzh6k")
-        if information.find_all("p"):
-            remote_jobs += 1
-        information = information.find_all("span")
-        if len(information) == 3:
-            level, job_time, salary = information
-            salary = salary.text.replace(",", "").replace("حقوق", "").strip()
-            min_salary, max_salary = salary.split("تا")
-            salaries["min"] = salaries.get("min", []) + [int(min_salary)]
-            salaries["max"] = salaries.get("max", []) + [int(max_salary)]
-        else:
-            level, job_time = information
-        counter(developer_levels, level.text)
-        if job_time.text == "تمام‌وقت":
-            key = "full_time"
-        elif job_time.text == "پاره‌وقت":
-            key = "part_time"
-        else:
-            key = "project"
-        counter(job_times, key)
+        job_technologies = job.find(class_="chakra-stack css-5lzoxc e35d97a1")
+        if job_technologies:
+            for tech in job_technologies:
+                try:
+                    if tech["title"] == "تکنولوژی اصلی":
+                        counter(main_technologies, tech.text)
+                except KeyError:
+                    counter(normal_technologies, tech.text)
+            information = job.find(class_="chakra-stack css-1iyteef")
+            if "امکان دورکاری" in information.text:
+                remote_jobs += 1
+            spans_in_information = information.find_all("span")
+            developer_level, job_time, *_ = spans_in_information
+            if "حقوق" in information.text:
+                for span in spans_in_information:
+                    if "حقوق" in span.text:
+                        salary = span.text
+                        salary = salary.replace(",", "").replace("حقوق", "").strip()
+                        min_salary, max_salary = salary.split("تا")
+                        salaries["min"] = salaries.get("min", []) + [int(min_salary)]
+                        salaries["max"] = salaries.get("max", []) + [int(max_salary)]
+            counter(developer_levels, developer_level.text)
+            if job_time.text == "تمام‌وقت":
+                key = "full_time"
+            elif job_time.text == "پاره‌وقت":
+                key = "part_time"
+            else:
+                key = "project"
+            counter(job_times, key)
 
     sleep_time = random.randint(4, 8)
     show_detail(f"wait {sleep_time} second to get page {page + 1} ...\n")
@@ -100,7 +108,7 @@ while True:
 
 # printing results
 
-print(f"all available jobs : {job_count}")
+print(f"all available jobs : {job_count - page - 1}")
 print(f"remote jobs count : {remote_jobs}")
 print(f"remote jobs percent : {(remote_jobs/job_count)*100:.2f}%\n")
 print(f"full time jobs count : {job_times['full_time']}")
