@@ -1,4 +1,7 @@
-import time, bs4, requests, random
+import time
+import bs4
+import requests
+import random
 
 
 def counter(dictionary: dict, key: str, how_many: int = 1):
@@ -12,7 +15,6 @@ def counter(dictionary: dict, key: str, how_many: int = 1):
 
 
 def show_detail(step: str):
-    global can_show_detail
     if can_show_detail:
         print(step)
 
@@ -43,7 +45,7 @@ while True:
         if page == 1:
             print("\nconnection lost !")
             re = ""
-        print("\nthis application need internet connection to job fine")
+        print("\nthis application need internet connection to get jobs fine")
         print(f"\nPLEASE {re}CONNECT TO THE INTERNET AND TRY AGAIN")
 
         input("press enter to close app")
@@ -56,7 +58,6 @@ while True:
         break
 
     # start page scraping
-
     show_detail(f"getting jobs in page {page} ...")
     jobs = parsed_response.find(class_="chakra-stack css-1536cui")
     for job in jobs:
@@ -90,7 +91,7 @@ while True:
         counter(job_times, key)
 
     sleep_time = random.randint(4, 8)
-    show_detail(f"wait for {sleep_time} second ...\n")
+    show_detail(f"wait {sleep_time} second to get page {page + 1} ...\n")
     time.sleep(sleep_time)
 
     # end page scraping
