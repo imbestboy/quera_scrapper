@@ -106,17 +106,21 @@ while True:
     page += 1
 
 
-# printing results
+# show results
 
 print(f"all available jobs : {job_count - page - 1}")
 print(f"remote jobs count : {remote_jobs}")
 print(f"remote jobs percent : {(remote_jobs/job_count)*100:.2f}%\n")
+
 print(f"full time jobs count : {job_times['full_time']}")
 print(f"full time jobs percent : {(job_times['full_time']/job_count)*100:.2f}%\n")
+
 print(f"part time jobs count : {job_times['part_time']}")
 print(f"part time jobs percent : {(job_times['part_time']/job_count)*100:.2f}%\n")
+
 print(f"project base jobs count : {job_times['project']}")
 print(f"project base jobs percent : {(job_times['project']/job_count)*100:.2f}%\n")
+
 all_level_developers = (
     developer_levels["junior"]
     + developer_levels["senior"]
@@ -127,18 +131,23 @@ print(f"junior developer count : {developer_levels['junior']}")
 print(
     f"junior developer percent : {(developer_levels['junior']/all_level_developers)*100:.2f}%\n"
 )
+
 print(f"senior developer count : {developer_levels['senior']}")
 print(
     f"senior developer percent : {(developer_levels['senior']/all_level_developers)*100:.2f}%\n"
 )
+
 print(f"intern developer count : {developer_levels['intern']}")
 print(
     f"intern developer percent : {(developer_levels['intern']/all_level_developers)*100:.2f}%\n"
 )
+
 print(f"lead developer count : {developer_levels['lead']}")
 print(
     f"lead developer percent : {(developer_levels['lead']/all_level_developers)*100:.2f}%\n"
 )
+
+# sort main technologies
 technologies_sorted = sorted(
     main_technologies.items(), reverse=True, key=lambda x: x[1]
 )
@@ -147,14 +156,17 @@ print(f"3 of most popular main technologies :")
 for i in range(3):
     print(f"{i+1}- {technologies_sorted[i][0]} ({technologies_sorted[i][1]})")
 
-technologies_sorted = sorted(
+# sort normal technologies
+normal_technologies_sorted = sorted(
     normal_technologies.items(), reverse=True, key=lambda x: x[1]
 )
 print(f"\n3 of most popular normal technologies :")
 for i in range(3):
-    print(f"{i+1}- {technologies_sorted[i][0]} ({technologies_sorted[i][1]})")
+    print(
+        f"{i+1}- {normal_technologies_sorted[i][0]} ({normal_technologies_sorted[i][1]})"
+    )
 print(
-    f"\nsalary avg : {int(sum(salaries['min'])/len(salaries['min'])):,} - {int(sum(salaries['max'])/len(salaries['max'])):,} from {len(salaries['min'])} jobs\n"
+    f"\nsalary avg : min: {int(sum(salaries['min'])/len(salaries['min'])):,} - max: {int(sum(salaries['max'])/len(salaries['max'])):,} from {len(salaries['min'])} jobs\n"
 )
 
 input("press enter to close app")
