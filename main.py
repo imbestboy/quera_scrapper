@@ -2,6 +2,8 @@ import time
 import bs4
 import requests
 import random
+import datetime
+import json
 
 
 def counter(dictionary: dict, key: str, how_many: int = 1):
@@ -21,7 +23,9 @@ def show_detail(step: str):
 
 
 detail_showing = input("do you want see detail of scrap ? (y/n) : ")
+save = input("do you want save data to json file ? (y/n) : ")
 print("\nthis application may takes some minute ...")
+can_save = True if detail_showing.startswith("y") else False
 can_show_detail = True if detail_showing.startswith("y") else False
 
 # initializing
@@ -165,8 +169,48 @@ for i in range(3):
     print(
         f"{i+1}- {normal_technologies_sorted[i][0]} ({normal_technologies_sorted[i][1]})"
     )
+
+min_avg = int(sum(salaries["min"]) / len(salaries["min"]))
+max_avg = int(sum(salaries["max"]) / len(salaries["max"]))
 print(
-    f"\nsalary avg : min: {int(sum(salaries['min'])/len(salaries['min'])):,} - max: {int(sum(salaries['max'])/len(salaries['max'])):,} from {len(salaries['min'])} jobs\n"
+    f"\nsalary avg : min: {min_avg:,} - max: {max_avg:,} from {len(salaries['min'])} jobs\n"
 )
+
+if can_save:
+    date_time = datetime.datetime.now().strftime("%d,%m,%Y_%H:%M:%S")
+    with open(f"{date_time}_quera_magnet.json", "w+") as save_file:
+        data_str = json.dumps(
+            {
+                "all_available_jobs": (job_count - page - 1),
+                "remote_jobs": remote_jobs,
+                "time": {
+                    "full_time_jobs": job_times["full_time"],
+                    "part_time_jobs": job_times["part_time"],
+                    "project_base_jobs": job_times["project"],
+                },
+                "developer_level": {
+                    "intern_developer": developer_levels["intern"],
+                    "junior_developer": developer_levels["junior"],
+                    "senior_developer": developer_levels["senior"],
+                    "lead_developer": developer_levels["lead"],
+                },
+                "main_technology": {
+                    technologies_sorted[0][0]: technologies_sorted[0][1],
+                    technologies_sorted[1][0]: technologies_sorted[1][1],
+                    technologies_sorted[2][0]: technologies_sorted[2][1],
+                },
+                "normal_technology": {
+                    normal_technologies_sorted[0][0]: normal_technologies_sorted[0][1],
+                    normal_technologies_sorted[1][0]: normal_technologies_sorted[1][1],
+                    normal_technologies_sorted[2][0]: normal_technologies_sorted[2][1],
+                },
+                "salary": {
+                    "min": int(sum(salaries["min"]) / len(salaries["min"])),
+                    "max": int(sum(salaries["max"]) / len(salaries["max"])),
+                    "count": len(salaries["min"]),
+                },
+            }
+        )
+        save_file.write(data_str)
 
 input("press enter to close app")
